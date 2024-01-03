@@ -10,7 +10,7 @@ class Course(models.Model):
     title = models.CharField(verbose_name='Course Title', max_length=200)
     price = models.FloatField(verbose_name='Course Price', default=1.00)
     duration = models.PositiveIntegerField(verbose_name="Course Duration", default=1)
-    currency = models.CharField(verbose_name='Course Currency', default='NGN')
+    currency = models.CharField(verbose_name='Course Currency', max_length=3, default='NGN')
     slug_title = AutoSlugField(populate_from='title', verbose_name='Course Slug', max_length=200, unique=True)
     date_uploaded = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
