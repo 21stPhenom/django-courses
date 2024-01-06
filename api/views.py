@@ -23,11 +23,6 @@ class Courses(APIView):
         queryset = CourseSerializer(queryset, many=True)
         return Response(queryset.data, status=status.HTTP_200_OK)
 
-class CreateCourse(APIView):
-    model = Course
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
     def post(self, request, format=None, *args, **kwargs):
         request.data['author'] = request.user.pk
         new_course = CourseSerializer(data=request.data)
@@ -36,7 +31,7 @@ class CreateCourse(APIView):
             return Response(new_course.data, status=status.HTTP_201_CREATED)
         
         return Response(new_course.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
 class ReadUpdateDeleteCourse(APIView):
     model = Course
     authentication_classes = [TokenAuthentication]
@@ -68,5 +63,4 @@ class ReadUpdateDeleteCourse(APIView):
         
 
 all_courses = Courses.as_view()
-new_course = CreateCourse.as_view()
 single_course = ReadUpdateDeleteCourse.as_view()
