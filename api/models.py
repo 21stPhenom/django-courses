@@ -7,7 +7,9 @@ from autoslug import AutoSlugField
 # Create your models here.
 class Course(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(verbose_name='Course Title', max_length=200)
+    
+    # Courses with the same title should not exist
+    title = models.CharField(verbose_name='Course Title', max_length=200, unique=True)
     price = models.FloatField(verbose_name='Course Price', default=1.00)
     duration = models.PositiveIntegerField(verbose_name="Course Duration", default=1)
     currency = models.CharField(verbose_name='Course Currency', max_length=3, default='NGN')
