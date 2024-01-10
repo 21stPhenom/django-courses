@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 
 from rest_framework import status
-from rest_framework.authentication import TokenAuthentication
+# from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -14,7 +14,6 @@ from api.serializers import CourseSerializer
 # Create your views here.
 class Courses(APIView):
     model = Course
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None, *args, **kwargs):
@@ -34,7 +33,6 @@ class Courses(APIView):
     
 class ReadUpdateDeleteCourse(APIView):
     model = Course
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
 
     def get(self, request, course_slug, format=None, *args, **kwargs):
