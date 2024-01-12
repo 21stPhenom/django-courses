@@ -9,7 +9,7 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_title(self, value):
-        print("Error from here")
         if Course.objects.filter(title=value).exists():
+            print("Error from here")
             raise serializers.ValidationError("This field must be unique")
         return value
