@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 
 from rest_framework import status
-# from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -40,10 +39,10 @@ class ReadUpdateDeleteCourse(APIView):
         serialized_course = CourseSerializer(course)
         return Response(serialized_course.data, status=status.HTTP_200_OK)
         
-    def put(self, request, course_slug, format=None, *args, **kwargs):
+    def patch(self, request, course_slug, format=None, *args, **kwargs):
         request.data['author'] = request.user.pk
         course = get_object_or_404(self.model, slug_title=course_slug)
-        serialized_course = CourseSerializer(course, data=request.data)
+        serialized_course = CourseSerializer(course, data=request.data, partial=True)
         if serialized_course.is_valid():
             serialized_course.save()
             print('Course updated')
