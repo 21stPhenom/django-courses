@@ -3,6 +3,7 @@ from django.db import models
 from django.urls import reverse
 
 from autoslug import AutoSlugField
+from autoslug.utils import slugify
 
 # Create your models here.
 class Course(models.Model):
@@ -14,8 +15,13 @@ class Course(models.Model):
     duration = models.PositiveIntegerField(verbose_name="Course Duration", default=1)
     currency = models.CharField(verbose_name='Course Currency', max_length=3, default='NGN')
     slug_title = AutoSlugField(populate_from='title', verbose_name='Course Slug', max_length=200, unique=True)
+    cover_photo = models.ImageField(upload_to='covers', default='')
     date_uploaded = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        self.slug_title = slugify(self.title)
+        super().save(*args, **kwargs)
 
     class Meta:
         ordering = ['-date_updated', '-date_uploaded']
