@@ -15,9 +15,30 @@ class Courses(APIView):
     model = Course
     permission_classes = [IsAuthenticated]
 
+    def _filter_queryset(self, filter_params: dict):
+        for param in filter_params.keys():
+            if param != 'format' and not hasattr(Course, param):
+                raise AttributeError(f"Course object has no attribute called {param}")
+        
+        for key, value in filter_params.items():
+            filter_params[key] = value[0]
+        print(filter_params)
+
+        if filter_params.get('price', None) != None:
+            filter_params['price'] = float(filter_params['price'])
+        if filter_params.get('duration', None) != None:
+            filter_params['duration'] = int(filter_params['duration'])
+
+
+        return self.model.objects.filter(**filter_params)
+
     def get(self, request, format=None, *args, **kwargs):
         print(f'Request from: {request.user}')
-        queryset = self.model.objects.all()
+        filter_params = dict(request.query_params)
+        if filter_params.get('format', None) != None:
+            format = filter_params.pop('format')
+            
+        queryset = self._filter_queryset(filter_params)
         queryset = CourseSerializer(queryset, many=True)
         return Response(queryset.data, status=status.HTTP_200_OK)
 
@@ -36,28 +57,26 @@ class ReadUpdateDeleteCourse(APIView):
 
     def get(self, request, course_slug, format=None, *args, **kwargs):
         course = get_object_or_404(self.model, slug_title=course_slug)
-        serialized_course = CourseSerializer(course)
-        return Response(serialized_course.data, status=status.HTTP_200_OK)
+        course = CourseSerializer(course)
+        return Response(course.data, status=status.HTTP_200_OK)
         
     def patch(self, request, course_slug, format=None, *args, **kwargs):
         request.data['author'] = request.user.pk
         course = get_object_or_404(self.model, slug_title=course_slug)
-        serialized_course = CourseSerializer(course, data=request.data, partial=True)
-        if serialized_course.is_valid():
-            serialized_course.save()
+        course = CourseSerializer(course, data=request.data, partial=True)
+        if course.is_valid():
+            course.save()
             print('Course updated')
-            return Response(serialized_course.data, status=status.HTTP_200_OK)
+            return Response(course.data, status=status.HTTP_200_OK)
         
-        return Response(serialized_course.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(course.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, course_slug, format=None, *args, **kwargs):
-        print(f'Request from: {request.user}')
         course = get_object_or_404(self.model, slug_title=course_slug)
         course.delete()
         return Response({
             'message': 'Course deleted.'
         }, status=status.HTTP_204_NO_CONTENT)
         
-
 all_courses = Courses.as_view()
 single_course = ReadUpdateDeleteCourse.as_view()
