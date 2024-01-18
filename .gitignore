@@ -3,3 +3,4 @@ db.sqlite3
 admin-details.txt
 user-details.txt
 .env
+venv

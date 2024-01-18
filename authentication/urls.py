@@ -6,4 +6,6 @@ app_name = 'authentication'
 urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', obtain_auth_token, name='login'),
+    path("google_auth/", views.GoogleSocialAuthView.as_view(), name="google auth")
+
 ]
