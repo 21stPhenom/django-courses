@@ -1,0 +1,26 @@
+<html>
+
+<body>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</body>
+<script>
+  function handleCredentialResponse(response) {
+    console.log("--------------------------------")
+    console.log(response?.credential)
+    console.log("--------------------------------")
+  }
+  window.onload = function () {
+    google.accounts.id.initialize({
+      client_id: 'your google client id',
+      referrerPolicy: {
+        policy: 'strict-origin-when-cross-origin'
+      },
+      callback: handleCredentialResponse
+    });
+    google.accounts.id.prompt();
+  };
+
+
+</script>
+
+</html>
